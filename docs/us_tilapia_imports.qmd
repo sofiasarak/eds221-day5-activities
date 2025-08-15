@@ -1,0 +1,49 @@
+---
+title: "Day 5 Wild Data (Part 3)"
+format: html
+editor: visual
+---
+
+Load packages
+```{r}
+library(tidyverse)
+library(here)
+library(janitor)
+```
+Reading in data and pivoting it!
+```{r}
+us_tilapia_imports <- read_csv(here::here("data", "us_tilapia_imports.csv"))
+names(us_tilapia_imports)
+us_tilapia_imports_long <- pivot_longer(data=us_tilapia_imports,
+                                        !country, 
+                                        names_to = "year", 
+                                        values_to = "annual_total_volume")
+```
+
+Checking and fixing class of year variable
+```{r}
+class(us_tilapia_imports_long$year) #it's a character type, oh no! because it was originally a column name?
+us_tilapia_imports_long$year <- as.numeric(us_tilapia_imports_long$year)
+class(us_tilapia_imports_long$year) #fixed!
+```
+
+Finding total
+```{r}
+yearly_tilapia_tot <- us_tilapia_imports_long |>
+  dplyr::group_by(year) |> summarize(total = sum(annual_total_volume, na.rm = TRUE))
+```
+
+Creating plot
+```{r}
+tilapia_imports_plot <- ggplot(data=yearly_tilapia_tot, aes(x=total, y=year)) + geom_line() + labs(title= "Annual U.S. Tilapia Imports", x= "Total Volumes (in thousands of pounds)", y="Year")
+tilapia_imports_plot
+
+#and saving! (it looks weird oops)
+ggsave(here::here("figs", "tilapia_imports_plot.png"))
+```
+
+Filtering for certain countries
+```{r}
+spec_countries <- us_tilapia_imports_long |> filter(us_tilapia_imports_long$country %in% c("Ecudaor", "Honduras", "Costa Rica", "Mexico"))
+```
+

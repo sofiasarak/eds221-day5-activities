@@ -1,0 +1,36 @@
+---
+title: "Day 5 Activities (Part 2)"
+author: "Sofia Sarak"
+format: html
+editor: visual
+---
+
+Attach necessary packages
+```{r}
+#| messages: false
+library(tidyverse)
+library(here)
+```
+
+Sourcing my R script to access my function!
+```{r}
+source(here::here("src", "storm_runoff.R"))
+```
+
+Estimating stormwater volume for a watershed of 182 acres, over a range of estimates for the impervious fraction (from 0.6 to 0.8, by increments of 0.01). 
+```{r}
+impervious_vec <- seq(0.6, 0.8, 0.01)
+runoff_volumes <- predict_runoff(I = impervious_vec, watershed_area = 182)
+runoff_prediction <- data.frame(impervious_values = impervious_vec, runoff = runoff_volumes)
+```
+
+Creating a plot!
+```{r}
+runoff_plot <- ggplot(data=runoff_prediction, aes(x=impervious_values, y=runoff)) + geom_point() +
+  geom_line() + labs(title = "Stormwater volume projection over range of impervious fractions", subtitle = "With a watershed of 182 acres", x="Impervious Fraction Values", y="Runoff Volume (cubic feet)")
+```
+Saving plot!
+```{r}
+ggsave(here::here("figs", "runoff_plot.png"))
+```
+
