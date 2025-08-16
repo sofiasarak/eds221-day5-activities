@@ -44,6 +44,18 @@ ggsave(here::here("figs", "tilapia_imports_plot.png"))
 
 Filtering for certain countries
 ```{r}
-spec_countries <- us_tilapia_imports_long |> filter(us_tilapia_imports_long$country %in% c("Ecudaor", "Honduras", "Costa Rica", "Mexico"))
+spec_countries <- us_tilapia_imports_long |> filter(us_tilapia_imports_long$country %in% c("Ecuador", "Honduras", "Costa Rica", "Mexico"))
+```
+
+Plotting and saving!
+```{r}
+spec_countries_plot_1 <- ggplot(data=spec_countries, aes(x = year, y= annual_total_volume, color = country)) + geom_point() + geom_line() + labs(title = "U.S. Tilapia Imports Over Time", subtitle = "Comparison among Ecuador, Honduras, Costa Rica, and Mexico", x = "Year", y = "Total Volumes (in thousands of pounds") + theme_minimal()
+spec_countries_plot_1
+ggsave(here::here("figs", "spec_countries_plot_1.jpg"))
+
+spec_countries_plot_2 <- ggplot(data=spec_countries, aes(x = year, y= annual_total_volume, color = country)) + geom_point() + geom_line() + labs(title = "U.S. Tilapia Imports Over Time", subtitle = "Comparison among Ecuador, Honduras, Costa Rica, and Mexico", x = "Year", y = "Total Volumes (in thousands of pounds") + facet_wrap(~country) + theme_minimal()
+spec_countries_plot_2
+
+ggsave(here::here("figs", "spec_countries_plot_2.jpg"))
 ```
 
